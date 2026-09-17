@@ -10,7 +10,7 @@ They vote. They get excited. They get confused. You get a result card and absolu
 
 ## Play locally
 
-Requires Node.js 22.13+ and npm.
+Requires Node.js 22 (22.13 or newer) and npm. The Node major is pinned in `.nvmrc` and `package.json`.
 
 ```sh
 git clone https://github.com/cbetz/extremely-specific-council.git
@@ -25,10 +25,10 @@ Without a key, the app offers four **scripted demo proposals**. Demo votes are a
 
 ## Live opinions
 
-Copy `.env.example` to `.dev.vars` in the project root and set your TypeSafe key:
+Copy `.env.example` to `.env.local` in the project root and set your TypeSafe key:
 
 ```sh
-cp .env.example .dev.vars
+cp .env.example .env.local
 ```
 
 ```dotenv
@@ -36,7 +36,7 @@ TYPESAFE_API_KEY=your-key-here
 TYPESAFE_MODEL=jev-latest
 ```
 
-Restart the dev server after changing runtime bindings. The app detects the key server-side and enables live mode. Keep `.dev.vars` and `.env` files out of Git; never use a `NEXT_PUBLIC_` prefix for credentials. This repository does not include a key.
+Restart the dev server after changing environment variables. The app detects the key server-side and enables live mode. Keep `.env.local` out of Git; never use a `NEXT_PUBLIC_` prefix for credentials. This repository does not include a key. If you used the original Cloudflare-based version, copy the values from your ignored `.dev.vars` file to `.env.local`; Next.js does not read `.dev.vars`.
 
 Live mode sends the submitted proposal to TypeSafe. The application does not persist proposals or votes. The provider has its own data policies. See [TypeSafe's quick start](https://docs.typesafe.ai/introduction/quickstart) for API access.
 
@@ -74,9 +74,17 @@ npm run build
 npm start
 ```
 
-`npm start` previews the built Cloudflare Worker locally. This app uses React, the Next.js App Router API through Vinext/Vite, and Cloudflare Workers. The generated Worker lives in `dist/server`; client assets live in `dist/client`. No database or authentication service is required.
+`npm start` serves the production Next.js build on port 3000. This app uses React and the native Next.js App Router, with a Node.js API route. No database or authentication service is required.
 
-The bundled build integration carries its own license in `build/sites-vite-plugin.LICENSE`. The project has no bound hosting account or published production URL. Deploy only to an account you control, configure the server secrets there, and apply platform-level rate limits and a provider spending limit before offering public live voting. The included in-memory burst guard is per isolate, not a global quota.
+## Deploy to Vercel
+
+Import this repository with the **Next.js** framework preset, repository root as the root directory, and default output directory (`.next`). The build command is `npm run build`, which runs native `next build`. Node 22 is selected by `package.json`.
+
+In the project's Environment Variables settings, add `TYPESAFE_API_KEY` for Production and any Preview deployments that should support live votes. `TYPESAFE_MODEL` is optional and defaults to `jev-latest`. Redeploy after changing variables; a deployment without a key still supports the scripted demos.
+
+The original version used Vinext and generated a Cloudflare Worker in `dist/server`. That output is incompatible with Vercel's Next.js preset and caused the missing `.next/routes-manifest.json` error. This repository now builds directly with Next.js; no output-directory workaround is needed.
+
+The included in-memory burst guard is per server instance, not a global quota. On Vercel it uses the platform's forwarded client IP; local development uses a shared bucket. Apply platform-level rate limits and a provider spending limit for public live voting.
 
 ## Add a member
 

@@ -1,5 +1,17 @@
 # Validation
 
+## Native Next.js migration — September 17, 2026
+
+- Replaced the Vinext/Cloudflare build with native Next.js 16.3.4 and the Node.js runtime for Vercel's Next.js preset. Removed the unused platform build integration and pinned the Node major to 22.
+- All eleven unit tests pass on Node 22.18.0. New route tests cover runtime key detection, same-origin submissions, and separate Vercel client-IP rate-limit buckets.
+- TypeScript passes, and `next build` generates `.next/routes-manifest.json` and `.next/BUILD_ID`. CI now checks for both artifacts after the build.
+- The built Next.js production server serves the page and configuration route. Demo and real TypeSafe requests both returned all twelve member decisions; the live call used `jev-1.13.0` and took 610 ms in this smoke check.
+- The production page was inspected in a browser with all twelve portraits and controls present and no reported runtime errors. The local credential is now loaded from ignored `.env.local`; a scan found no credential in the client build assets.
+
+The checks below document the original version before this migration.
+
+## Initial build
+
 Local checks on September 16, 2026 (America/New_York), on macOS:
 
 - Eight unit tests pass: batched question construction, explicit demo provenance, upstream response validation, invalid requests, fixed provider endpoint/key handling, upstream failure handling, and division scoring.
@@ -21,6 +33,6 @@ Live verification on September 17, 2026 (America/New_York):
 - The live browser flow reported no runtime errors. The API response was checked for absence of the configured secret.
 - A live PNG card downloaded successfully and was visually inspected: its live label, proposal, twelve votes, totals, and division score matched the browser result.
 
-These are two smoke checks, not a benchmark or evidence of model accuracy. No production hosting account is bound to this repository.
+These are two smoke checks, not a benchmark or evidence of model accuracy.
 
 The confidence display is not an empirical accuracy measure. Captions and demo fixtures are authored. The only timing shown for live results is measured by the server around the provider request.

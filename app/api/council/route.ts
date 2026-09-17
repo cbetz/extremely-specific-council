@@ -1,20 +1,23 @@
-import { env } from "cloudflare:workers";
-import { REQUEST_SCHEMA, demoResult, evaluate } from "@/lib/engine";
+import { REQUEST_SCHEMA, demoResult, evaluate } from "../../../lib/engine.ts";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 const headers = {
   "Cache-Control": "no-store",
   "X-Content-Type-Options": "nosniff",
 };
 function config() {
-  const e = env as unknown as Record<string, string | undefined>;
   return {
-    key: e.TYPESAFE_API_KEY ?? process.env.TYPESAFE_API_KEY,
-    model: e.TYPESAFE_MODEL ?? process.env.TYPESAFE_MODEL ?? "jev-latest",
+    key: process.env.TYPESAFE_API_KEY,
+    model: process.env.TYPESAFE_MODEL ?? "jev-latest",
   };
 }
 export function GET() {
   return Response.json({ live: !!config().key, demo: true }, { headers });
 }
-// Small, isolate-local burst guard. Use a platform-level limit before public live hosting.
+// Small, process-local burst guard; this is not a global quota.
 const calls = new Map<string, { count: number; until: number }>();
 function permit(id: string) {
   const now = Date.now();
@@ -104,7 +107,12 @@ export async function POST(request: Request) {
         },
         { status: 503, headers },
       );
-    if (!permit(request.headers.get("cf-connecting-ip") ?? "local"))
+    // Vercel overwrites this header with the connecting IP. Do not trust it
+    // on arbitrary self-hosted servers without a known proxy configuration.
+    const clientId = process.env.VERCEL === "1"
+      ? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
+      : "local";
+    if (!permit(clientId))
       return Response.json(
         { error: "The council needs a breather. Try again in a minute." },
         { status: 429, headers: { ...headers, "Retry-After": "60" } },
