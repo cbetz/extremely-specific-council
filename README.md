@@ -86,7 +86,7 @@ Useful contributions: sharper personalities, better rubric examples, accessibili
 
 ## Verification
 
-See [validation notes](docs/VALIDATION.md) for the checks actually run and the remaining live-API limitation. CI runs the unit tests, type checks, and production build. Test fixtures are not real model results.
+See [validation notes](docs/VALIDATION.md) for the checks actually run, including live API and browser verification. CI runs the unit tests, type checks, and production build. Test fixtures are not real model results.
 
 Code and included original artwork: MIT. Artwork was generated with OpenAI's built-in image tool; [asset provenance and prompt](docs/ARTWORK.md).
 
