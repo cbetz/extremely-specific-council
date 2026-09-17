@@ -46,7 +46,7 @@ Each submission makes **one request with 36 independent questions** against the 
 
 | Per character | Primitive | Used for |
 |---|---|---|
-| Vote | Choice | Approve, object, or baffled |
+| Vote | Choice | Approve, oppose, or baffled |
 | Enthusiasm | Score | Four ordered levels, displayed on a 0–100 scale |
 | Confusion | Noul | Probability the character struggles to understand the idea or its relevance |
 

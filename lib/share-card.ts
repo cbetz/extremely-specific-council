@@ -83,7 +83,7 @@ export async function downloadCard(result: CouncilResult) {
     ctx.fillStyle =
       d.vote === "yes" ? "#186b44" : d.vote === "no" ? "#b73331" : "#745600";
     ctx.fillText(
-      d.vote === "yes" ? "APPROVES" : d.vote === "no" ? "OBJECTS" : "BAFFLED",
+      d.vote === "yes" ? "APPROVES" : d.vote === "no" ? "OPPOSES" : "BAFFLED",
       x + 130,
       y + 186,
     );
@@ -93,7 +93,7 @@ export async function downloadCard(result: CouncilResult) {
   ctx.fillStyle = "#3348ee";
   ctx.font = "bold 27px Arial";
   ctx.fillText(
-    `${t.yes} approve. ${t.no} object. ${t.confused} need a minute.`,
+    `${t.yes} approve. ${t.no} oppose. ${t.confused} need a minute.`,
     48,
     1035,
   );

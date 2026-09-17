@@ -47,7 +47,7 @@ type ToolRegistry = {
     options: { signal: AbortSignal },
   ) => void | Promise<void>;
 };
-const VOTE_LABELS = { yes: "APPROVES", no: "OBJECTS", confused: "BAFFLED" };
+const VOTE_LABELS = { yes: "APPROVES", no: "OPPOSES", confused: "BAFFLED" };
 function Portrait({ index }: { index: number }) {
   return (
     <div
@@ -290,7 +290,7 @@ export default function Home() {
     const t = tally(result.decisions);
     try {
       await navigator.clipboard.writeText(
-        `I asked the Council: “${result.idea}”\n\n${t.yes} approve. ${t.no} object. ${t.confused} are baffled.\nDivision: ${t.division}/100.${result.mode === "demo" ? " (Scripted demo)" : ""}\n\nhttps://github.com/cbetz/extremely-specific-council`,
+        `I asked the Council: “${result.idea}”\n\n${t.yes} approve. ${t.no} oppose. ${t.confused} are baffled.\nDivision: ${t.division}/100.${result.mode === "demo" ? " (Scripted demo)" : ""}\n\nhttps://github.com/cbetz/extremely-specific-council`,
       );
       setNotice("Verdict copied. Go start an argument.");
     } catch {
@@ -487,7 +487,7 @@ export default function Home() {
                   <b>{votes.yes}</b> approve
                 </span>
                 <span>
-                  <b>{votes.no}</b> object
+                  <b>{votes.no}</b> oppose
                 </span>
                 <span>
                   <b>{votes.confused}</b> baffled
